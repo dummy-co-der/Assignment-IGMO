@@ -1,0 +1,28 @@
+.second {
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin-top: 2rem;
+}
+
+.heading {
+  text-align: center;
+}
+
+.department li {
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+}
+
+.subDepartment li {
+  list-style-type: none;
+  margin: 0px 50px;
+  display: flex;
+  flex-direction: row;
+}
