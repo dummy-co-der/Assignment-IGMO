@@ -3,20 +3,23 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@mui/material";
 import "./FormPage.css";
 
+// Interface for storing form input values
 interface IFormInputValues {
     email: string;
     name: string;
     telephone: string;
 }
 
+// Function to retrieve form values from localStorage
 function getFormValues() {
     const storedValues = localStorage.getItem("form");
-    if (!storedValues)
+    if (!storedValues) {
         return {
             email: "",
             name: "",
             telephone: "",
         };
+    }
     return JSON.parse(storedValues);
 }
 
@@ -25,10 +28,22 @@ const FormPage: React.FC = () => {
     const [values, setValues] = useState<IFormInputValues>(getFormValues);
     const [formSubmitted, setFormSubmitted] = useState(false);
 
+    // Store form values in localStorage when they change
     useEffect(() => {
-        localStorage.setItem("form", JSON.stringify(values));
+        if (values.name && values.telephone && values.email) {
+            localStorage.setItem("form", JSON.stringify(values));
+        }
     }, [values]);
 
+    // Check if there is data in localStorage on component mount
+    // useEffect(() => {
+    //     const storedValues = localStorage.getItem("form");
+    //     if (!storedValues) {
+    //         navigate("/"); // Redirect to home page if no data is present in localStorage
+    //     }
+    // }, [navigate]);
+
+    // Handle form submission
     function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         const userDetails = {
@@ -36,15 +51,18 @@ const FormPage: React.FC = () => {
             telephone: values.telephone,
             email: values.email,
         };
+
+        // Check if all fields are filled before submitting the form
         if (userDetails.name && userDetails.telephone && userDetails.email) {
-            localStorage.setItem("userDetails", JSON.stringify(userDetails));
-            navigate("/second");
+            localStorage.setItem("form", JSON.stringify(userDetails));
+            navigate("/second"); // Navigate to the "second" page after successful form submission
         } else {
             setFormSubmitted(true);
-            alert("Please enter all fields.");
+            alert("Please enter all fields."); // Show an alert if any field is missing
         }
     }
 
+    // Handle changes in form inputs
     function handleChange(
         event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) {
@@ -52,7 +70,7 @@ const FormPage: React.FC = () => {
             ...previousValues,
             [event.target.name]: event.target.value,
         }));
-        setFormSubmitted(false);
+        setFormSubmitted(false); // Reset formSubmitted state when the user makes changes
     }
 
     return (
@@ -98,8 +116,9 @@ const FormPage: React.FC = () => {
                         />
                     </label>
 
-                    <Button type="submit">Submit</Button>
-                    {formSubmitted && (
+                    <Button type="submit"> Submit</Button>
+                    {/* Show an error message if the form is submitted without filling all fields */}
+                    {formSubmitted && !values.name && !values.telephone && !values.email && (
                         <p style={{ color: "red" }}>Please enter all fields.</p>
                     )}
                 </form>
